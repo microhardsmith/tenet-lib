@@ -1,0 +1,1 @@
+This repository contains the C source code and dynamic library for tenet project.

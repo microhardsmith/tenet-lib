@@ -1,7 +1,8 @@
 /*
 !.gitignore
-!*.c
-!*.h
-!*.dll
-!*.so
-!*.dylib
+!README.md
+!/c/*.c
+!/c/*.h
+!/lib/*.dll
+!/lib/*.so
+!/lib/*.dylib
