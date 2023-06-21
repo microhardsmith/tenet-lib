@@ -5,6 +5,8 @@ FILE* g_stdout();
 
 FILE* g_stderr();
 
+void g_print(char* str, FILE* stream);
+
 int m_connect_block_code();
 
 int m_send_block_code();
