@@ -72,6 +72,12 @@ FILE* g_stderr() {
     return stderr;
 }
 
+// 输出字符串至指定流
+void g_print(char* str, FILE* stream) {
+    fputs(str, stream);
+    fflush(stream);
+}
+
 // 返回connect导致阻塞的错误码,在macos下为EINPROGRESS
 int m_connect_block_code() {
     return EINPROGRESS;
