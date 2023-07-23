@@ -143,20 +143,17 @@ int m_set_sock_addr(struct sockaddr_in* sockAddr, char* address, uint16_t port) 
 
 // 设置reuseAddr选项,失败则返回-1,成功则返回0
 int m_set_reuse_addr(int socket, int value) {
-    void* ptr = &value;
-    return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, ptr, sizeof(value));
+    return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (void*) &value, sizeof(value));
 }
 
 // 设置keepalive选项,失败则返回-1,成功则返回0
 int m_set_keep_alive(int socket, int value) {
-    void* ptr = &value;
-    return setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, ptr, sizeof(value));
+    return setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (void*) &value, sizeof(value));
 }
 
 // 设置tcpnodelay选项,失败则返回-1,成功则返回0
 int m_set_tcp_no_delay(int socket, int value) {
-    void* ptr = &value;
-    return setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, ptr, sizeof(value));
+    return setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (void*) &value, sizeof(value));
 }
 
 // 获取指定socket上的错误码,如果socket上无错误应返回0

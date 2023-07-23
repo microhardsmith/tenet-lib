@@ -53,7 +53,6 @@ int main() {
     }
 
     // 设置为非阻塞
-    long long arg = 1;
     int nonBlockingResult = w_set_nonblocking(socket);
     if(nonBlockingResult == -1) {
         printf("Error at set NonBlocking : %d \n", w_get_last_error());
@@ -253,12 +252,7 @@ int w_set_sock_addr(struct sockaddr_in* sockAddr, char* address, u_short port) {
 
 // 设置TCP_NODELAY为指定值,失败返回-1,成功返回0
 int w_set_reuse_addr(SOCKET socket, int value) {
-    void* ptr = &value;
-    int result = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, ptr, sizeof(value));
-    if(result == SOCKET_ERROR) {
-        return -1;
-    }
-    return result;
+    return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (char*) &value, sizeof(value));
 }
 
 // 设置TCP_NODELAY为指定值,失败返回-1,成功返回0
