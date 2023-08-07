@@ -221,7 +221,7 @@ int w_epoll_close(void* handle) {
 
 // 获取客户端连接的地址,写入到指定addrStr下出现错误则返回-1,否则返回0
 int w_address(struct sockaddr_in* clientAddr, char* addrStr, int len) {
-    const char* result = inet_ntop(AF_INET, clientAddr, addrStr, len);
+    const char* result = inet_ntop(AF_INET, &(clientAddr -> sin_addr), addrStr, len);
     if(result == NULL) {
         return -1;
     }
