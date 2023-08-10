@@ -13,7 +13,7 @@ endif
 
 # 编译器和编译选项
 CC = clang
-CFLAGS = -fcolor-diagnostics -fansi-escape-codes -Wall -g -shared
+CFLAGS = -fcolor-diagnostics -fansi-escape-codes -Wall -g0 -shared
 LDFLAGS = -O2 -v
 
 # 目标文件和库文件
