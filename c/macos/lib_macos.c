@@ -183,11 +183,6 @@ int m_listen(int socket, int backlog) {
     return listen(socket, backlog);
 }
 
-// 返回EINPROGRESS的值,用于判定非阻塞socket是否在连接中
-int m_err_inprogress() {
-    return EINPROGRESS;
-}
-
 ssize_t m_send(int socket, void* buf, size_t len) {
     return send(socket, buf, len, 0);
 }

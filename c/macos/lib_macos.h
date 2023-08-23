@@ -43,8 +43,6 @@ int m_bind(int socket, struct sockaddr_in* sockAddr, socklen_t size);
 
 int m_listen(int socket, int backlog);
 
-int m_err_inprogress();
-
 int m_connect(int socket, struct sockaddr_in* sockAddr, socklen_t size);
 
 ssize_t m_send(int socket, void* buf, size_t len);
