@@ -1,4 +1,3 @@
-# 检测操作系统类型
 ifeq ($(OS),Windows_NT)
     PLATFORM = windows
 else
@@ -11,27 +10,25 @@ else
     endif
 endif
 
-# 编译器和编译选项
 CC = clang
 CFLAGS = -fcolor-diagnostics -fansi-escape-codes -Wall -g0 -shared
+SRC_DIR = $(CURDIR)/src
 LDFLAGS = -O2 -v
 
-# 目标文件和库文件
 ifeq ($(PLATFORM),windows)
-    TARGET = lib_win.dll
-    SRC_DIR = $(CURDIR)/c/windows
+    TARGET = libtenet.dll
+    SRC = $(SRC_DIR)/lib_win.c $(SRC_DIR)/wepoll.c $(SRC_DIR)/share.c
 else ifeq ($(PLATFORM),linux)
-    TARGET = lib_linux.so
-    SRC_DIR = $(CURDIR)/c/linux
+    TARGET = libtenet.so
     CFLAGS += -fPIC
+    SRC = $(SRC_DIR)/lib_linux.c $(SRC_DIR)/share.c
 else ifeq ($(PLATFORM),macos)
-    TARGET = lib_macos.dylib
-    SRC_DIR = $(CURDIR)/c/macos
+    TARGET = libtenet.dylib
     CFLAGS += -fPIC
+    SRC = $(SRC_DIR)/lib_macos.c $(SRC_DIR)/share.c
+else
+    $(error Invalid PLATFORM)
 endif
-
-# 源代码文件列表
-SRC = $(wildcard $(SRC_DIR)/*.c)
 
 # 生成的动态库放置的目录
 LIB_DIR = lib
