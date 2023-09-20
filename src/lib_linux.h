@@ -1,7 +1,7 @@
 #ifndef LIB_LINUX_H
 #define LIB_LINUX_H
 
-EXPORT_SYMBOL l_connect_block_code();
+EXPORT_SYMBOL int l_connect_block_code();
 
 EXPORT_SYMBOL int l_send_block_code();
 
