@@ -11,4 +11,10 @@ EXPORT_SYMBOL FILE *get_stdout();
 
 EXPORT_SYMBOL FILE *get_stderr();
 
+EXPORT_SYMBOL int get_fbf();
+
+EXPORT_SYMBOL int get_lbf();
+
+EXPORT_SYMBOL int get_nbf();
+
 #endif
