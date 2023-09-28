@@ -13,113 +13,158 @@
 #include "share.h"
 #include "lib_linux.h"
 
-// 返回connect导致阻塞的错误码,在Linux系统下为EINPROGRESS
 int l_connect_block_code()
 {
     return EINPROGRESS;
 }
 
-// 返回send导致阻塞的错误码,在Linux系统下为EAGAIN或EWOULDBLOCK
 int l_send_block_code()
 {
     return EAGAIN;
 }
 
-// 创建epoll,失败则返回-1,成功则返回生成的fd
+int l_ipv4_address_len()
+{
+    return INET_ADDRSTRLEN;
+}
+
+int l_ipv6_address_len()
+{
+    return INET6_ADDRSTRLEN;
+}
+
 int l_epoll_create()
 {
-    // the size parameter of epoll_create() is deprecated
     return epoll_create(1);
 }
 
-// 操作epoll事件,失败则返回-1,成功则返回0
 int l_epoll_ctl(int epfd, int op, int socket, struct epoll_event *ev)
 {
     return epoll_ctl(epfd, op, socket, ev);
 }
 
-// 等待epoll事件,失败则返回-1,成功则返回获取事件的数量,可能为0
 int l_epoll_wait(int epfd, struct epoll_event *events, int maxEvents, int timeout)
 {
     return epoll_wait(epfd, events, maxEvents, timeout);
 }
 
-// 返回ip地址字节长度
-socklen_t l_address_len()
+int l_ipv4_address_size()
 {
-    return INET_ADDRSTRLEN;
+    return sizeof(struct sockaddr_in);
 }
 
-// 从sockAddr中获取客户端地址字符串,失败则返回-1,成功则返回0
-int l_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t len)
+int l_ipv6_address_size()
 {
-    const char *ptr = inet_ntop(AF_INET, &(sockAddr->sin_addr), addrStr, len);
-    if (ptr == NULL)
+    return sizeof(struct sockaddr_in6);
+}
+
+int l_get_ipv4_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t len)
+{
+    const char *result = inet_ntop(AF_INET, &(sockAddr->sin_addr), addrStr, len);
+    if (result == NULL)
     {
         return -1;
     }
     return 0;
 }
 
-// 获取客户端连接的端口号
-uint16_t l_port(struct sockaddr_in *sockAddr)
+int l_get_ipv6_address(struct sockaddr_in6 *sockAddr, char *addrStr, socklen_t len)
+{
+    const char *result = inet_ntop(AF_INET6, &(sockAddr->sin6_addr), addrStr, len);
+    if (result == NULL)
+    {
+        return -1;
+    }
+    return 0;
+}
+
+uint16_t l_ipv4_port(struct sockaddr_in *sockAddr)
 {
     return ntohs(sockAddr->sin_port);
 }
 
-// 创建socket,失败则返回-1,成功则返回socket fd
-int l_socket_create()
+uint16_t l_ipv6_port(struct sockaddr_in6 *sockAddr)
+{
+    return ntohs(sockAddr->sin6_port);
+}
+
+int l_ipv4_socket_create()
 {
     return socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
-// 接受socket连接,失败则返回-1,成功则返回socket fd,在非阻塞情况下,未立刻建立的连接错误码为EAGAIN或EWOULDBLOCK
-int l_accept(int socket, struct sockaddr_in *clientAddr, socklen_t clientAddrSize)
+int l_ipv6_socket_create()
+{
+    return socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+}
+
+int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize)
 {
     return accept(socket, (struct sockaddr *)clientAddr, &clientAddrSize);
 }
 
-// 设置sock地址,失败则返回-1,成功则返回1,地址为非法字符串则返回0
-int l_set_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t port)
+int l_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t port)
 {
     sockAddr->sin_family = AF_INET;
     sockAddr->sin_port = htons(port);
-    return inet_pton(AF_INET, address, &(sockAddr->sin_addr));
+    if (address == NULL)
+    {
+        sockAddr->sin_addr.s_addr = INADDR_ANY;
+        return 1;
+    }
+    else
+    {
+        return inet_pton(AF_INET, address, &(sockAddr->sin_addr));
+    }
 }
 
-// 设置reuseAddr选项,失败则返回-1,成功则返回0
+int l_set_ipv6_sock_addr(struct sockaddr_in6 *sockAddr, char *address, uint16_t port)
+{
+    sockAddr->sin6_family = AF_INET6;
+    sockAddr->sin6_port = htons(port);
+    if (address == NULL)
+    {
+        sockAddr->sin6_addr = in6addr_any;
+        return 1;
+    }
+    else
+    {
+        return inet_pton(AF_INET6, address, &(sockAddr->sin6_addr));
+    }
+}
+
 int l_set_reuse_addr(int socket, int value)
 {
     return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (void *)&value, sizeof(value));
 }
 
-// 设置keepalive选项,失败则返回-1,成功则返回0
 int l_set_keep_alive(int socket, int value)
 {
     return setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (void *)&value, sizeof(value));
 }
 
-// 设置tcpnodelay选项,失败则返回-1,成功则返回0
 int l_set_tcp_no_delay(int socket, int value)
 {
     return setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (void *)&value, sizeof(value));
 }
 
-// 获取指定socket上的错误码,如果socket上无错误应返回0
+int l_set_ipv6_only(int socket, int value)
+{
+    return setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&value, sizeof(value));
+}
+
 int l_get_err_opt(int socket, int *ptr)
 {
     socklen_t ptr_size = sizeof(int);
     return getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *)ptr, &ptr_size);
 }
 
-// 设置socket为非阻塞,失败则返回-1,成功则返回0
 int l_set_nonblocking(int socket)
 {
     int flag = fcntl(socket, F_GETFD, 0);
     return fcntl(socket, F_SETFL, flag | O_NONBLOCK);
 }
 
-// bind端口地址,失败则返回-1,成功则返回0
 int l_bind(int socket, struct sockaddr_in *sockAddr, socklen_t size)
 {
     return bind(socket, (struct sockaddr *)sockAddr, size);
