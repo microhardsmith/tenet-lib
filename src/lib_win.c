@@ -18,6 +18,11 @@ int w_send_block_code()
     return WSAEWOULDBLOCK;
 }
 
+int w_interrupt_code()
+{
+    return WSAEINTR;
+}
+
 SOCKET w_invalid_socket()
 {
     return INVALID_SOCKET;

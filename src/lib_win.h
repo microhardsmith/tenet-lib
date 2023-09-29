@@ -5,6 +5,8 @@ EXPORT_SYMBOL int w_connect_block_code();
 
 EXPORT_SYMBOL int w_send_block_code();
 
+EXPORT_SYMBOL int w_interrupt_code();
+
 EXPORT_SYMBOL SOCKET w_invalid_socket();
 
 EXPORT_SYMBOL int w_ipv4_address_len();
