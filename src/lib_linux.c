@@ -33,6 +33,16 @@ int l_ipv6_address_len()
     return INET6_ADDRSTRLEN;
 }
 
+int l_ipv4_address_size()
+{
+    return sizeof(struct sockaddr_in);
+}
+
+int l_ipv6_address_size()
+{
+    return sizeof(struct sockaddr_in6);
+}
+
 int l_epoll_create()
 {
     return epoll_create(1);
@@ -46,16 +56,6 @@ int l_epoll_ctl(int epfd, int op, int socket, struct epoll_event *ev)
 int l_epoll_wait(int epfd, struct epoll_event *events, int maxEvents, int timeout)
 {
     return epoll_wait(epfd, events, maxEvents, timeout);
-}
-
-int l_ipv4_address_size()
-{
-    return sizeof(struct sockaddr_in);
-}
-
-int l_ipv6_address_size()
-{
-    return sizeof(struct sockaddr_in6);
 }
 
 int l_get_ipv4_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t len)
@@ -165,13 +165,12 @@ int l_set_nonblocking(int socket)
     return fcntl(socket, F_SETFL, flag | O_NONBLOCK);
 }
 
-int l_bind(int socket, struct sockaddr_in *sockAddr, socklen_t size)
+int l_bind(int socket, void *sockAddr, socklen_t size)
 {
     return bind(socket, (struct sockaddr *)sockAddr, size);
 }
 
-// 客户端建立连接,失败则返回-1,成功则返回0
-int l_connect(int socket, struct sockaddr_in *sockAddr, socklen_t size)
+int l_connect(int socket, void *sockAddr, socklen_t size)
 {
     return connect(socket, (struct sockaddr *)sockAddr, size);
 }
@@ -183,13 +182,13 @@ int l_listen(int socket, int backlog)
 }
 
 // 从socket接受数据,失败则返回-1,成功则返回接受的字节数
-ssize_t l_recv(int socket, void *buf, size_t len)
+int l_recv(int socket, void *buf, int len)
 {
     return recv(socket, buf, len, 0);
 }
 
 // 向socket发送数据,失败则返回-1,成功则返回已接收字节数
-ssize_t l_send(int socket, void *buf, size_t len)
+int l_send(int socket, void *buf, int len)
 {
     return send(socket, buf, len, 0);
 }
