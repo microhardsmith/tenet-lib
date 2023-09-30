@@ -38,6 +38,16 @@ int w_ipv6_address_len()
     return INET6_ADDRSTRLEN;
 }
 
+int w_ipv4_address_size()
+{
+    return sizeof(struct sockaddr_in);
+}
+
+int w_ipv6_address_size()
+{
+    return sizeof(struct sockaddr_in6);
+}
+
 void *w_epoll_create()
 {
     return epoll_create(1);
@@ -56,16 +66,6 @@ int w_epoll_wait(void *handle, struct epoll_event *events, int maxevents, int ti
 int w_epoll_close(void *handle)
 {
     return epoll_close(handle);
-}
-
-int w_ipv4_address_size()
-{
-    return sizeof(struct sockaddr_in);
-}
-
-int w_ipv6_address_size()
-{
-    return sizeof(struct sockaddr_in6);
 }
 
 int w_get_ipv4_address(struct sockaddr_in *clientAddr, char *addrStr, int len)
@@ -175,12 +175,12 @@ int w_set_nonblocking(SOCKET socket)
     return ioctlsocket(socket, FIONBIO, &argp);
 }
 
-int w_bind(SOCKET socket, struct sockaddr_in *sockAddr, int size)
+int w_bind(SOCKET socket, void *sockAddr, int size)
 {
     return bind(socket, (SOCKADDR *)sockAddr, size);
 }
 
-int w_connect(SOCKET socket, struct sockaddr_in *sockAddr, int size)
+int w_connect(SOCKET socket, void *sockAddr, int size)
 {
     return connect(socket, (SOCKADDR *)sockAddr, size);
 }

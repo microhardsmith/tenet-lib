@@ -13,6 +13,10 @@ EXPORT_SYMBOL int w_ipv4_address_len();
 
 EXPORT_SYMBOL int w_ipv6_address_len();
 
+EXPORT_SYMBOL int w_ipv4_address_size();
+
+EXPORT_SYMBOL int w_ipv6_address_size();
+
 EXPORT_SYMBOL void *w_epoll_create();
 
 EXPORT_SYMBOL int w_epoll_ctl(void *handle, int op, SOCKET socket, struct epoll_event *event);
@@ -20,10 +24,6 @@ EXPORT_SYMBOL int w_epoll_ctl(void *handle, int op, SOCKET socket, struct epoll_
 EXPORT_SYMBOL int w_epoll_wait(void *handle, struct epoll_event *events, int maxevents, int timeout);
 
 EXPORT_SYMBOL int w_epoll_close(void *handle);
-
-EXPORT_SYMBOL int w_ipv4_address_size();
-
-EXPORT_SYMBOL int w_ipv6_address_size();
 
 EXPORT_SYMBOL int w_get_ipv4_address(struct sockaddr_in *clientAddr, char *addrStr, int len);
 
@@ -55,9 +55,9 @@ EXPORT_SYMBOL int w_get_err_opt(SOCKET socket, int *ptr);
 
 EXPORT_SYMBOL int w_set_nonblocking(SOCKET socket);
 
-EXPORT_SYMBOL int w_bind(SOCKET socket, struct sockaddr_in *sockAddr, int size);
+EXPORT_SYMBOL int w_bind(SOCKET socket, void *sockAddr, int size);
 
-EXPORT_SYMBOL int w_connect(SOCKET socket, struct sockaddr_in *sockAddr, int size);
+EXPORT_SYMBOL int w_connect(SOCKET socket, void *sockAddr, int size);
 
 EXPORT_SYMBOL int w_listen(SOCKET socket, int backlog);
 
