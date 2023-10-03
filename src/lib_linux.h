@@ -5,6 +5,8 @@ EXPORT_SYMBOL int l_connect_block_code();
 
 EXPORT_SYMBOL int l_send_block_code();
 
+EXPORT_SYMBOL int l_interrupt_code();
+
 EXPORT_SYMBOL int l_ipv4_address_len();
 
 EXPORT_SYMBOL int l_ipv6_address_len();

@@ -23,6 +23,11 @@ int l_send_block_code()
     return EAGAIN;
 }
 
+int l_interrupt_code()
+{
+    return EINTR;
+}
+
 int l_ipv4_address_len()
 {
     return INET_ADDRSTRLEN;
