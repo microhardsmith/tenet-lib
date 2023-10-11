@@ -9,3 +9,4 @@
 !/lib/*.so
 !/lib/*.dylib
 !*.svg
+!*.png
