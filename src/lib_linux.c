@@ -180,37 +180,31 @@ int l_connect(int socket, void *sockAddr, socklen_t size)
     return connect(socket, (struct sockaddr *)sockAddr, size);
 }
 
-// listen端口地址,失败则返回-1,成功则返回0
 int l_listen(int socket, int backlog)
 {
-    return listen(socket, backlog);
+    return listen(socket, backlog < SOMAXCONN ? backlog : SOMAXCONN);
 }
 
-// 从socket接受数据,失败则返回-1,成功则返回接受的字节数
 int l_recv(int socket, void *buf, int len)
 {
     return recv(socket, buf, len, 0);
 }
 
-// 向socket发送数据,失败则返回-1,成功则返回已接收字节数
 int l_send(int socket, void *buf, int len)
 {
     return send(socket, buf, len, 0);
 }
 
-// 关闭fd,失败则返回-1,成功则返回0
 int l_close(int fd)
 {
     return close(fd);
 }
 
-// 关闭fd写端,失败则返回-1,成功则返回0
 int l_shutdown_write(int fd)
 {
     return shutdown(fd, SHUT_WR);
 }
 
-// 返回当前错误码
 int l_errno()
 {
     return errno;

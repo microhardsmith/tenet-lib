@@ -183,7 +183,7 @@ int m_connect(int socket, void *sockAddr, int size)
 
 int m_listen(int socket, int backlog)
 {
-    return listen(socket, backlog);
+    return listen(socket, backlog < SOMAXCONN ? backlog : SOMAXCONN);
 }
 
 int m_recv(int socket, void *buf, int len)
