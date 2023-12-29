@@ -37,23 +37,6 @@ int m_ipv6_address_len()
     return INET6_ADDRSTRLEN;
 }
 
-int m_kqueue()
-{
-    return kqueue();
-}
-
-int m_kevent_ctl(int kq, int fd, int16_t filter, uint16_t flags)
-{
-    struct kevent event;
-    EV_SET(&event, fd, filter, flags, 0, 0, NULL);
-    return kevent(kq, &event, 1, NULL, 0, NULL);
-}
-
-int m_kevent_wait(int kq, struct kevent *eventlist, int nevents, struct timespec *timeout)
-{
-    return kevent(kq, NULL, 0, eventlist, nevents, timeout);
-}
-
 int m_ipv4_address_size()
 {
     return sizeof(struct sockaddr_in);
@@ -64,12 +47,39 @@ int m_ipv6_address_size()
     return sizeof(struct sockaddr_in6);
 }
 
+int m_kqueue()
+{
+    int r = kqueue();
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
+int m_kevent_ctl(int kq, struct kevent *changelist, int nchanges) {
+    int r = kevent(kq, changelist, nchanges, NULL, 0, NULL);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
+
+int m_kevent_wait(int kq, struct kevent *eventlist, int nevents, struct timespec *timeout)
+{
+    int r = kevent(kq, NULL, 0, eventlist, nevents, timeout);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
 int m_get_ipv4_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t len)
 {
     const char *result = inet_ntop(AF_INET, &(sockAddr->sin_addr), addrStr, len);
     if (result == NULL)
     {
-        return -1;
+        return -errno;
     }
     return 0;
 }
@@ -79,7 +89,7 @@ int m_get_ipv6_address(struct sockaddr_in6 *sockAddr, char *addrStr, socklen_t l
     const char *result = inet_ntop(AF_INET6, &(sockAddr->sin6_addr), addrStr, len);
     if (result == NULL)
     {
-        return -1;
+        return -errno;
     }
     return 0;
 }
@@ -96,17 +106,20 @@ uint16_t m_ipv6_port(struct sockaddr_in6 *sockAddr)
 
 int m_ipv4_socket_create()
 {
-    return socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    int r = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_ipv6_socket_create()
 {
-    return socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
-}
-
-int m_accept(int socket, void *clientAddr, socklen_t clientAddrSize)
-{
-    return accept(socket, (struct sockaddr *)clientAddr, &clientAddrSize);
+    int r = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t port)
@@ -120,7 +133,11 @@ int m_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t p
     }
     else
     {
-        return inet_pton(AF_INET, address, &(sockAddr->sin_addr));
+        int r = inet_pton(AF_INET, address, &(sockAddr->sin_addr));
+        if(r == -1) {
+            return -errno;
+        }
+        return r;
     }
 }
 
@@ -135,78 +152,138 @@ int m_set_ipv6_sock_addr(struct sockaddr_in6 *sockAddr, char *address, uint16_t 
     }
     else
     {
-        return inet_pton(AF_INET6, address, &(sockAddr->sin6_addr));
+        int r = inet_pton(AF_INET6, address, &(sockAddr->sin6_addr));
+        if(r == -1) {
+            return -errno;
+        }
+        return r;
     }
 }
 
 int m_set_reuse_addr(int socket, int value)
 {
-    return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_set_keep_alive(int socket, int value)
 {
-    return setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_set_tcp_no_delay(int socket, int value)
 {
-    return setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_set_ipv6_only(int socket, int value)
 {
-    return setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_get_err_opt(int socket, int *ptr)
 {
     socklen_t ptr_size = sizeof(int);
-    return getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *)ptr, &ptr_size);
+    int r = getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *)ptr, &ptr_size);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_set_nonblocking(int socket)
 {
     int flag = fcntl(socket, F_GETFD, 0);
-    return fcntl(socket, F_SETFL, flag | O_NONBLOCK);
+    int r = fcntl(socket, F_SETFL, flag | O_NONBLOCK);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_bind(int socket, void *sockAddr, int size)
 {
-    return bind(socket, (struct sockaddr *)sockAddr, size);
-}
-
-int m_connect(int socket, void *sockAddr, int size)
-{
-    return connect(socket, (struct sockaddr *)sockAddr, size);
+    int r = bind(socket, (struct sockaddr *)sockAddr, size);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_listen(int socket, int backlog)
 {
-    return listen(socket, backlog < SOMAXCONN ? backlog : SOMAXCONN);
+    int r = listen(socket, backlog < SOMAXCONN ? backlog : SOMAXCONN);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
+int m_connect(int socket, void *sockAddr, int size)
+{
+    int r = connect(socket, (struct sockaddr *)sockAddr, size);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
+int m_accept(int socket, void *clientAddr, socklen_t clientAddrSize)
+{
+    int r = accept(socket, (struct sockaddr *)clientAddr, &clientAddrSize);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_recv(int socket, void *buf, int len)
 {
-    return recv(socket, buf, len, 0);
+    int r = recv(socket, buf, len, 0);
+    if(r < 0) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_send(int socket, void *buf, int len)
 {
-    return send(socket, buf, len, 0);
-}
-
-int m_close(int fd)
-{
-    return close(fd);
+    int r = send(socket, buf, len, 0);
+    if(r < 0) {
+        return -errno;
+    }
+    return r;
 }
 
 int m_shutdown_write(int fd)
 {
-    return shutdown(fd, SHUT_WR);
+    int r = shutdown(fd, SHUT_WR);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
-int m_errno()
+int m_close(int fd)
 {
-    return errno;
+    int r = close(fd);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
