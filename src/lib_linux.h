@@ -1,6 +1,11 @@
 #ifndef LIB_LINUX_H
 #define LIB_LINUX_H
 
+#include <stdint.h>
+#include <sys/epoll.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 EXPORT_SYMBOL int l_connect_block_code();
 
 EXPORT_SYMBOL int l_send_block_code();
@@ -33,8 +38,6 @@ EXPORT_SYMBOL int l_ipv4_socket_create();
 
 EXPORT_SYMBOL int l_ipv6_socket_create();
 
-EXPORT_SYMBOL int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize);
-
 EXPORT_SYMBOL int l_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t port);
 
 EXPORT_SYMBOL int l_set_ipv6_sock_addr(struct sockaddr_in6 *sockAddr, char *address, uint16_t port);
@@ -53,18 +56,18 @@ EXPORT_SYMBOL int l_set_nonblocking(int socket);
 
 EXPORT_SYMBOL int l_bind(int socket, void *sockAddr, socklen_t size);
 
+EXPORT_SYMBOL int l_listen(int socket, int backlog);
+
 EXPORT_SYMBOL int l_connect(int socket, void *sockAddr, socklen_t size);
 
-EXPORT_SYMBOL int l_listen(int socket, int backlog);
+EXPORT_SYMBOL int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize);
 
 EXPORT_SYMBOL int l_recv(int socket, void *buf, int len);
 
 EXPORT_SYMBOL int l_send(int socket, void *buf, int len);
 
-EXPORT_SYMBOL int l_close(int fd);
-
 EXPORT_SYMBOL int l_shutdown_write(int fd);
 
-EXPORT_SYMBOL int l_errno();
+EXPORT_SYMBOL int l_close(int fd);
 
 #endif

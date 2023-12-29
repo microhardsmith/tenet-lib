@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdint.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -50,17 +50,29 @@ int l_ipv6_address_size()
 
 int l_epoll_create()
 {
-    return epoll_create(1);
+    int r = epoll_create(1);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_epoll_ctl(int epfd, int op, int socket, struct epoll_event *ev)
 {
-    return epoll_ctl(epfd, op, socket, ev);
+    int r = epoll_ctl(epfd, op, socket, ev);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_epoll_wait(int epfd, struct epoll_event *events, int maxEvents, int timeout)
 {
-    return epoll_wait(epfd, events, maxEvents, timeout);
+    int r = epoll_wait(epfd, events, maxEvents, timeout);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_get_ipv4_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t len)
@@ -68,7 +80,7 @@ int l_get_ipv4_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t le
     const char *result = inet_ntop(AF_INET, &(sockAddr->sin_addr), addrStr, len);
     if (result == NULL)
     {
-        return -1;
+        return -errno;
     }
     return 0;
 }
@@ -78,7 +90,7 @@ int l_get_ipv6_address(struct sockaddr_in6 *sockAddr, char *addrStr, socklen_t l
     const char *result = inet_ntop(AF_INET6, &(sockAddr->sin6_addr), addrStr, len);
     if (result == NULL)
     {
-        return -1;
+        return -errno;
     }
     return 0;
 }
@@ -95,17 +107,20 @@ uint16_t l_ipv6_port(struct sockaddr_in6 *sockAddr)
 
 int l_ipv4_socket_create()
 {
-    return socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    int r = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_ipv6_socket_create()
 {
-    return socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
-}
-
-int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize)
-{
-    return accept(socket, (struct sockaddr *)clientAddr, &clientAddrSize);
+    int r = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t port)
@@ -119,7 +134,11 @@ int l_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address, uint16_t p
     }
     else
     {
-        return inet_pton(AF_INET, address, &(sockAddr->sin_addr));
+        int r = inet_pton(AF_INET, address, &(sockAddr->sin_addr));
+        if(r == -1) {
+            return -errno;
+        }
+        return r;
     }
 }
 
@@ -134,78 +153,138 @@ int l_set_ipv6_sock_addr(struct sockaddr_in6 *sockAddr, char *address, uint16_t 
     }
     else
     {
-        return inet_pton(AF_INET6, address, &(sockAddr->sin6_addr));
+        int r = inet_pton(AF_INET6, address, &(sockAddr->sin6_addr));
+        if(r == -1) {
+            return -errno;
+        }
+        return r;
     }
 }
 
 int l_set_reuse_addr(int socket, int value)
 {
-    return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_set_keep_alive(int socket, int value)
 {
-    return setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_set_tcp_no_delay(int socket, int value)
 {
-    return setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_set_ipv6_only(int socket, int value)
 {
-    return setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&value, sizeof(value));
+    int r = setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&value, sizeof(value));
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_get_err_opt(int socket, int *ptr)
 {
     socklen_t ptr_size = sizeof(int);
-    return getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *)ptr, &ptr_size);
+    int r = getsockopt(socket, SOL_SOCKET, SO_ERROR, (void *)ptr, &ptr_size);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_set_nonblocking(int socket)
 {
     int flag = fcntl(socket, F_GETFD, 0);
-    return fcntl(socket, F_SETFL, flag | O_NONBLOCK);
+    int r = fcntl(socket, F_SETFL, flag | O_NONBLOCK);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_bind(int socket, void *sockAddr, socklen_t size)
 {
-    return bind(socket, (struct sockaddr *)sockAddr, size);
-}
-
-int l_connect(int socket, void *sockAddr, socklen_t size)
-{
-    return connect(socket, (struct sockaddr *)sockAddr, size);
+    int r = bind(socket, (struct sockaddr *)sockAddr, size);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_listen(int socket, int backlog)
 {
-    return listen(socket, backlog < SOMAXCONN ? backlog : SOMAXCONN);
+    int r = listen(socket, backlog < SOMAXCONN ? backlog : SOMAXCONN);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
+int l_connect(int socket, void *sockAddr, socklen_t size)
+{
+    int r = connect(socket, (struct sockaddr *)sockAddr, size);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
+}
+
+int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize)
+{
+    int r = accept(socket, (struct sockaddr *)clientAddr, &clientAddrSize);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_recv(int socket, void *buf, int len)
 {
-    return recv(socket, buf, len, 0);
+    int r = recv(socket, buf, len, 0);
+    if(r < 0) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_send(int socket, void *buf, int len)
 {
-    return send(socket, buf, len, 0);
-}
-
-int l_close(int fd)
-{
-    return close(fd);
+    int r = send(socket, buf, len, 0);
+    if(r < 0) {
+        return -errno;
+    }
+    return r;
 }
 
 int l_shutdown_write(int fd)
 {
-    return shutdown(fd, SHUT_WR);
+    int r = shutdown(fd, SHUT_WR);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
 
-int l_errno()
+int l_close(int fd)
 {
-    return errno;
+    int r = close(fd);
+    if(r == -1) {
+        return -errno;
+    }
+    return r;
 }
