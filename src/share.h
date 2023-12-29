@@ -7,6 +7,8 @@
 #define EXPORT_SYMBOL __attribute__((visibility("default")))
 #endif
 
+#include <stdio.h>
+
 EXPORT_SYMBOL FILE *get_stdout();
 
 EXPORT_SYMBOL FILE *get_stderr();

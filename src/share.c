@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "share.h"
+#include <stdio.h>
 
 FILE *get_stdout()
 {
