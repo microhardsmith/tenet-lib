@@ -1,7 +1,7 @@
 #ifndef LIB_LINUX_H
 #define LIB_LINUX_H
 
-#include <share.h>
+#include "share.h"
 #include <stdint.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
