@@ -1,10 +1,10 @@
+#include "lib_win.h"
+#include "share.h"
+#include "wepoll.h"
 #include <WS2tcpip.h>
 #include <WinSock2.h>
 #include <errno.h>
 #include <stdio.h>
-#include "share.h"
-#include "lib_win.h"
-#include "wepoll.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -21,6 +21,10 @@ int w_ipv6_address_len() { return INET6_ADDRSTRLEN; }
 int w_ipv4_address_size() { return sizeof(struct sockaddr_in); }
 
 int w_ipv6_address_size() { return sizeof(struct sockaddr_in6); }
+
+int w_ipv4_address_align() { return _Alignof(struct sockaddr_in); }
+
+int w_ipv6_address_align() { return _Alignof(struct sockaddr_in6); }
 
 int w_epoll_create(void **ptr)
 {

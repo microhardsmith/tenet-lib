@@ -1,7 +1,10 @@
 #ifndef TENET_WIN_H
 #define TENET_WIN_H
 
+#include "share.h"
 #include "wepoll.h"
+#include <WS2tcpip.h>
+#include <WinSock2.h>
 
 EXPORT_SYMBOL int w_connect_block_code();
 
@@ -16,6 +19,10 @@ EXPORT_SYMBOL int w_ipv6_address_len();
 EXPORT_SYMBOL int w_ipv4_address_size();
 
 EXPORT_SYMBOL int w_ipv6_address_size();
+
+EXPORT_SYMBOL int w_ipv4_address_align();
+
+EXPORT_SYMBOL int w_ipv6_address_align();
 
 EXPORT_SYMBOL int w_epoll_create(void **ptr);
 
