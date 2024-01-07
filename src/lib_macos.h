@@ -1,6 +1,10 @@
 #ifndef LIB_MACOS_H
 #define LIB_MACOS_H
 
+#include <sys/socket.h>
+#include <sys/event.h>
+#include <netinet/in.h>
+
 EXPORT_SYMBOL int m_connect_block_code();
 
 EXPORT_SYMBOL int m_send_block_code();
