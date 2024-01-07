@@ -48,6 +48,14 @@ int l_ipv6_address_size()
     return sizeof(struct sockaddr_in6);
 }
 
+int l_ipv4_address_align() {
+    return _Alignof(struct sockaddr_in);
+}
+
+int l_ipv6_address_align() {
+    return _Alignof(struct sockaddr_in6);
+}
+
 int l_epoll_create()
 {
     int r = epoll_create(1);

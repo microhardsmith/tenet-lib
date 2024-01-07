@@ -47,6 +47,14 @@ int m_ipv6_address_size()
     return sizeof(struct sockaddr_in6);
 }
 
+int m_ipv4_address_align() {
+    return _Alignof(struct sockaddr_in);
+}
+
+int m_ipv6_address_align() {
+    return _Alignof(struct sockaddr_in6);
+}
+
 int m_kqueue()
 {
     int r = kqueue();

@@ -1,6 +1,7 @@
 #ifndef LIB_LINUX_H
 #define LIB_LINUX_H
 
+#include <share.h>
 #include <stdint.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
@@ -19,6 +20,10 @@ EXPORT_SYMBOL int l_ipv6_address_len();
 EXPORT_SYMBOL int l_ipv4_address_size();
 
 EXPORT_SYMBOL int l_ipv6_address_size();
+
+EXPORT_SYMBOL int l_ipv4_address_align();
+
+EXPORT_SYMBOL int l_ipv6_address_align();
 
 EXPORT_SYMBOL int l_epoll_create();
 

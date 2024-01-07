@@ -1,6 +1,8 @@
 #ifndef LIB_MACOS_H
 #define LIB_MACOS_H
 
+#include "share.h"
+
 EXPORT_SYMBOL int m_connect_block_code();
 
 EXPORT_SYMBOL int m_send_block_code();
@@ -14,6 +16,10 @@ EXPORT_SYMBOL int m_ipv6_address_len();
 EXPORT_SYMBOL int m_ipv4_address_size();
 
 EXPORT_SYMBOL int m_ipv6_address_size();
+
+EXPORT_SYMBOL int l_ipv4_address_align();
+
+EXPORT_SYMBOL int l_ipv6_address_align();
 
 EXPORT_SYMBOL int m_kqueue();
 

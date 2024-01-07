@@ -11,7 +11,7 @@ else
 endif
 
 CC = clang
-CFLAGS = -fcolor-diagnostics -fansi-escape-codes -Wall -g0 -shared
+CFLAGS = -std=c11 -fcolor-diagnostics -fansi-escape-codes -Wall -g0 -shared
 SRC_DIR = $(CURDIR)/src
 LDFLAGS = -O2 -v
 
