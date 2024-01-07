@@ -19,9 +19,9 @@ EXPORT_SYMBOL int m_ipv4_address_size();
 
 EXPORT_SYMBOL int m_ipv6_address_size();
 
-EXPORT_SYMBOL int l_ipv4_address_align();
+EXPORT_SYMBOL int m_ipv4_address_align();
 
-EXPORT_SYMBOL int l_ipv6_address_align();
+EXPORT_SYMBOL int m_ipv6_address_align();
 
 EXPORT_SYMBOL int m_kqueue();
 
