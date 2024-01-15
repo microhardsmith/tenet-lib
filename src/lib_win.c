@@ -255,7 +255,7 @@ int w_listen(SOCKET socket, int backlog)
 int w_connect(SOCKET socket, void *sockAddr, int size)
 {
     int r = connect(socket, (SOCKADDR *)sockAddr, size);
-    if (r == SOCKET_ERROR)
+    if (likely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
