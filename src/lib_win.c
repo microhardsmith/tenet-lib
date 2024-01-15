@@ -29,7 +29,7 @@ int w_ipv6_address_align() { return _Alignof(struct sockaddr_in6); }
 int w_epoll_create(void **ptr)
 {
     void *handle = epoll_create(1);
-    if (handle == NULL)
+    if (unlikely(handle == NULL))
     {
         return -errno;
     }
@@ -41,7 +41,7 @@ int w_epoll_ctl(void *handle, int op, SOCKET socket,
                 struct epoll_event *event)
 {
     int r = epoll_ctl(handle, op, socket, event);
-    if (r == -1)
+    if (unlikely(r == -1))
     {
         return -errno;
     }
@@ -52,7 +52,7 @@ int w_epoll_wait(void *handle, struct epoll_event *events, int maxevents,
                  int timeout)
 {
     int r = epoll_wait(handle, events, maxevents, timeout);
-    if (r == -1)
+    if (unlikely(r == -1))
     {
         return -errno;
     }
@@ -62,7 +62,7 @@ int w_epoll_wait(void *handle, struct epoll_event *events, int maxevents,
 int w_epoll_close(void *handle)
 {
     int r = epoll_close(handle);
-    if (r == -1)
+    if (unlikely(r == -1))
     {
         return -errno;
     }
@@ -73,7 +73,7 @@ int w_get_ipv4_address(struct sockaddr_in *clientAddr, char *addrStr, int len)
 {
     const char *result =
         inet_ntop(AF_INET, &(clientAddr->sin_addr), addrStr, len);
-    if (result == NULL)
+    if (unlikely(result == NULL))
     {
         return -errno;
     }
@@ -85,7 +85,7 @@ int w_get_ipv6_address(struct sockaddr_in6 *clientAddr, char *addrStr,
 {
     const char *result =
         inet_ntop(AF_INET6, &(clientAddr->sin6_addr), addrStr, len);
-    if (result == NULL)
+    if (unlikely(result == NULL))
     {
         return -errno;
     }
@@ -105,7 +105,7 @@ u_short w_ipv6_port(struct sockaddr_in6 *clientAddr)
 int w_ipv4_socket_create(SOCKET *ptr)
 {
     SOCKET r = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (r == INVALID_SOCKET)
+    if (unlikely(r == INVALID_SOCKET))
     {
         return -WSAGetLastError();
     }
@@ -116,7 +116,7 @@ int w_ipv4_socket_create(SOCKET *ptr)
 int w_ipv6_socket_create(SOCKET *ptr)
 {
     SOCKET r = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
-    if (r == INVALID_SOCKET)
+    if (unlikely(r == INVALID_SOCKET))
     {
         return -WSAGetLastError();
     }
@@ -137,7 +137,7 @@ int w_set_ipv4_sock_addr(struct sockaddr_in *sockAddr, char *address,
     else
     {
         int r = inet_pton(AF_INET, address, &(sockAddr->sin_addr));
-        if (r == -1)
+        if (unlikely(r == -1))
         {
             return -WSAGetLastError();
         }
@@ -158,7 +158,7 @@ int w_set_ipv6_sock_addr(struct sockaddr_in6 *sockAddr, char *address,
     else
     {
         int r = inet_pton(AF_INET6, address, &(sockAddr->sin6_addr));
-        if (r == -1)
+        if (unlikely(r == -1))
         {
             return -WSAGetLastError();
         }
@@ -170,7 +170,7 @@ int w_set_reuse_addr(SOCKET socket, int value)
 {
     int r = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (char *)&value,
                        sizeof(value));
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -181,7 +181,7 @@ int w_set_keep_alive(SOCKET socket, int value)
 {
     int r = setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (char *)&value,
                        sizeof(value));
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -192,7 +192,7 @@ int w_set_tcp_no_delay(SOCKET socket, int value)
 {
     int r = setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, (char *)&value,
                        sizeof(value));
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -203,7 +203,7 @@ int w_set_ipv6_only(SOCKET socket, int value)
 {
     int r = setsockopt(socket, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&value,
                        sizeof(value));
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -214,7 +214,7 @@ int w_get_err_opt(SOCKET socket, int *ptr)
 {
     int ptr_size = sizeof(int);
     int r = getsockopt(socket, SOL_SOCKET, SO_ERROR, (char *)ptr, &ptr_size);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -225,7 +225,7 @@ int w_set_nonblocking(SOCKET socket)
 {
     u_long argp = 1;
     int r = ioctlsocket(socket, FIONBIO, &argp);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -235,7 +235,7 @@ int w_set_nonblocking(SOCKET socket)
 int w_bind(SOCKET socket, void *sockAddr, int size)
 {
     int r = bind(socket, (SOCKADDR *)sockAddr, size);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -245,7 +245,7 @@ int w_bind(SOCKET socket, void *sockAddr, int size)
 int w_listen(SOCKET socket, int backlog)
 {
     int r = listen(socket, SOMAXCONN_HINT(backlog));
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -265,7 +265,7 @@ int w_connect(SOCKET socket, void *sockAddr, int size)
 int w_accept(SOCKET socket, SOCKET *ptr, void *clientAddr, int clientAddrSize)
 {
     SOCKET r = accept(socket, (struct sockaddr *)clientAddr, &clientAddrSize);
-    if (r == INVALID_SOCKET)
+    if (unlikely(r == INVALID_SOCKET))
     {
         return -WSAGetLastError();
     }
@@ -276,7 +276,7 @@ int w_accept(SOCKET socket, SOCKET *ptr, void *clientAddr, int clientAddrSize)
 int w_recv(SOCKET socket, char *buf, int len)
 {
     int r = recv(socket, buf, len, 0);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -286,7 +286,7 @@ int w_recv(SOCKET socket, char *buf, int len)
 int w_send(SOCKET socket, char *buf, int len)
 {
     int r = send(socket, buf, len, 0);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -296,7 +296,7 @@ int w_send(SOCKET socket, char *buf, int len)
 int w_close_socket(SOCKET socket)
 {
     int r = closesocket(socket);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -306,7 +306,7 @@ int w_close_socket(SOCKET socket)
 int w_shutdown_write(SOCKET socket)
 {
     int r = shutdown(socket, SD_SEND);
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }
@@ -316,7 +316,7 @@ int w_shutdown_write(SOCKET socket)
 int w_clean_up()
 {
     int r = WSACleanup();
-    if (r == SOCKET_ERROR)
+    if (unlikely(r == SOCKET_ERROR))
     {
         return -WSAGetLastError();
     }

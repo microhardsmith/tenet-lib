@@ -7,6 +7,9 @@
 #define EXPORT_SYMBOL __attribute__((visibility("default")))
 #endif
 
+#define likely(x) __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+
 #include <stdio.h>
 
 EXPORT_SYMBOL FILE *get_stdout();
