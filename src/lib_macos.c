@@ -262,7 +262,7 @@ int m_listen(int socket, int backlog)
 int m_connect(int socket, void *sockAddr, int size)
 {
     int r = connect(socket, (struct sockaddr *)sockAddr, size);
-    if (r == -1)
+    if (likely(r == -1))
     {
         return -errno;
     }
