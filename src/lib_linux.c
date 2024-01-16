@@ -280,7 +280,7 @@ int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize)
     return r;
 }
 
-int l_recv(int socket, void *buf, int len)
+ssize_t l_recv(int socket, void *buf, size_t len)
 {
     int r = recv(socket, buf, len, 0);
     if (unlikely(r == -1))
@@ -290,7 +290,7 @@ int l_recv(int socket, void *buf, int len)
     return r;
 }
 
-int l_send(int socket, void *buf, int len)
+ssize_t l_send(int socket, void *buf, size_t len)
 {
     int r = send(socket, buf, len, 0);
     if (unlikely(r == -1))

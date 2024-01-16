@@ -67,9 +67,9 @@ EXPORT_SYMBOL int l_connect(int socket, void *sockAddr, socklen_t size);
 
 EXPORT_SYMBOL int l_accept(int socket, void *clientAddr, socklen_t clientAddrSize);
 
-EXPORT_SYMBOL int l_recv(int socket, void *buf, int len);
+EXPORT_SYMBOL ssize_t l_recv(int socket, void *buf, size_t len);
 
-EXPORT_SYMBOL int l_send(int socket, void *buf, int len);
+EXPORT_SYMBOL ssize_t l_send(int socket, void *buf, size_t len);
 
 EXPORT_SYMBOL int l_shutdown_write(int fd);
 
