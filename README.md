@@ -8,11 +8,11 @@ The `lib` folder contains some prebuilt dynamic library which might just fit int
 
 The tenet project would be using some well known open-source librarys if needed, including:
 
-- ![deflate](https://github.com/ebiggers/libdeflate)
-- ![brotli](https://github.com/google/brotli/tree/master) 
-- ![sqlite](https://github.com/sqlite/sqlite)
-- ![duckdb](https://github.com/duckdb/duckdb)
-- ![openssl](https://github.com/openssl/openssl)
+- [deflate](https://github.com/ebiggers/libdeflate)
+- [brotli](https://github.com/google/brotli/tree/master) 
+- [sqlite](https://github.com/sqlite/sqlite)
+- [duckdb](https://github.com/duckdb/duckdb)
+- [openssl](https://github.com/openssl/openssl)
 
 If you are using features with these libraries involved, you are recommended to build them yourself, and put them under the same folder with `libtenet`, for your application to load them. 
 
