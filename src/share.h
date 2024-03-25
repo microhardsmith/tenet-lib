@@ -22,4 +22,18 @@ EXPORT_SYMBOL int get_lbf();
 
 EXPORT_SYMBOL int get_nbf();
 
+EXPORT_SYMBOL int rp_initialize();
+
+EXPORT_SYMBOL void rp_tinitialize();
+
+EXPORT_SYMBOL void rp_tfinalize();
+
+EXPORT_SYMBOL void rp_finalize();
+
+EXPORT_SYMBOL void *rp_malloc(size_t size);
+
+EXPORT_SYMBOL void rp_free(void *ptr);
+
+EXPORT_SYMBOL void *rp_realloc(void *ptr, size_t size);
+
 #endif

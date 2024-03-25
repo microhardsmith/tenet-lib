@@ -1,5 +1,6 @@
-#include "share.h"
 #include <stdio.h>
+#include "share.h"
+#include "rpmalloc.h"
 
 FILE *get_stdout()
 {
@@ -24,4 +25,39 @@ int get_lbf()
 int get_nbf()
 {
     return _IONBF;
+}
+
+int rp_initialize()
+{
+    return rpmalloc_initialize();
+}
+
+void rp_tinitialize()
+{
+    rpmalloc_thread_initialize();
+}
+
+void rp_tfinalize()
+{
+    rpmalloc_thread_finalize(1);
+}
+
+void rp_finalize()
+{
+    rpmalloc_finalize();
+}
+
+void *rp_malloc(size_t size)
+{
+    return rpmalloc(size);
+}
+
+void rp_free(void *ptr)
+{
+    rpfree(ptr);
+}
+
+void *rp_realloc(void *ptr, size_t size)
+{
+    return rprealloc(ptr, size);
 }
