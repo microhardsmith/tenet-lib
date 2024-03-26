@@ -21,11 +21,11 @@ ifeq ($(PLATFORM),windows)
     SRC := $(SRC_FILES) $(SRC_DIR)/lib_win.c $(SRC_DIR)/wepoll.c
 else ifeq ($(PLATFORM),linux)
     TARGET = libtenet.so
-    CFLAGS += -fPIC -flto -D_GNU_SOURCE
+    CFLAGS += -fPIC -flto -fvisibility=hidden -D_GNU_SOURCE
     SRC := $(SRC_FILES) $(SRC_DIR)/lib_linux.c 
 else ifeq ($(PLATFORM),macos)
     TARGET = libtenet.dylib
-    CFLAGS += -fPIC -flto
+    CFLAGS += -fPIC -flto -fvisibility=hidden
     SRC := $(SRC_FILES) $(SRC_DIR)/lib_macos.c 
 else
     $(error Invalid PLATFORM : $(PLATFORM))
