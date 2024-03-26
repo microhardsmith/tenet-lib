@@ -1,6 +1,10 @@
 #ifndef TENET_SHARED_H
 #define TENET_SHARED_H
 
+#if defined(__linux__)
+#define _GNU_SOURCE
+#endif
+
 #if defined(_WIN32)
 #define EXPORT_SYMBOL __declspec(dllexport)
 #else
