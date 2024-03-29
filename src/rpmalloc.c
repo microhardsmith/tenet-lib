@@ -3200,7 +3200,7 @@ int rpmalloc_initialize_config(const rpmalloc_config_t *config)
 
     size_t min_span_size = 256;
     size_t max_page_size;
-#if defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+#if UINTPTR_MAX > 0xFFFFFFFF
     max_page_size = 4096ULL * 1024ULL * 1024ULL;
 #else
     max_page_size = 4 * 1024 * 1024;
