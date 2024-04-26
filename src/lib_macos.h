@@ -27,7 +27,7 @@ EXPORT_SYMBOL int m_kqueue();
 
 EXPORT_SYMBOL int m_kevent_ctl(int kq, struct kevent *changelist, int nchanges);
 
-EXPORT_SYMBOL int m_kevent_wait(int kq, struct kevent *eventlist, int nevents, struct timespec *timeout);
+EXPORT_SYMBOL int m_kevent_wait(int kq, struct kevent *eventlist, int nevents, int timeout);
 
 EXPORT_SYMBOL int m_get_ipv4_address(struct sockaddr_in *sockAddr, char *addrStr, socklen_t len);
 

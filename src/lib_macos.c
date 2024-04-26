@@ -77,9 +77,10 @@ int m_kevent_ctl(int kq, struct kevent *changelist, int nchanges)
     return r;
 }
 
-int m_kevent_wait(int kq, struct kevent *eventlist, int nevents, struct timespec *timeout)
+int m_kevent_wait(int kq, struct kevent *eventlist, int nevents, int timeout)
 {
-    int r = kevent(kq, NULL, 0, eventlist, nevents, timeout);
+    struct timespec t = {.tv_sec = timeout / 1000, .tv_nsec = (timeout % 1000) * 1000000};
+    int r = kevent(kq, NULL, 0, eventlist, nevents, &t);
     if (unlikely(r == -1))
     {
         return -errno;
