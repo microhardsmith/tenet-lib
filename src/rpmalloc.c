@@ -436,16 +436,16 @@ _Static_assert((SPAN_HEADER_SIZE & (SPAN_HEADER_SIZE - 1)) == 0, "Span header si
 #if ENABLE_VALIDATE_ARGS
 //! Maximum allocation size to avoid integer overflow
 #undef MAX_ALLOC_SIZE
-#define MAX_ALLOC_SIZE (((size_t)-1) - _memory_span_size)
+#define MAX_ALLOC_SIZE (((size_t) - 1) - _memory_span_size)
 #endif
 
 #define pointer_offset(ptr, ofs) (void *)((char *)(ptr) + (ptrdiff_t)(ofs))
 #define pointer_diff(first, second) (ptrdiff_t)((const char *)(first) - (const char *)(second))
 
-#define INVALID_POINTER ((void *)((uintptr_t)-1))
+#define INVALID_POINTER ((void *)((uintptr_t) - 1))
 
 #define SIZE_CLASS_LARGE SIZE_CLASS_COUNT
-#define SIZE_CLASS_HUGE ((uint32_t)-1)
+#define SIZE_CLASS_HUGE ((uint32_t) - 1)
 
 ////////////
 ///
@@ -899,7 +899,11 @@ static void
 _rpmalloc_spin(void)
 {
 #if defined(_MSC_VER)
+#if defined(_M_ARM64)
+    __yield();
+#else
     _mm_pause();
+#endif
 #elif defined(__x86_64__) || defined(__i386__)
     __asm__ volatile("pause" ::: "memory");
 #elif defined(__aarch64__) || (defined(__arm__) && __ARM_ARCH >= 7)
@@ -2060,17 +2064,17 @@ _rpmalloc_heap_extract_new_span(heap_t *heap, heap_size_class_t *heap_size_class
             _rpmalloc_inc_span_statistics(heap, span_count, class_idx);
             return span;
         }
-        span = _rpmalloc_heap_reserved_extract(heap, span_count);
-        if (EXPECTED(span != 0))
-        {
-            _rpmalloc_stat_inc(&heap->size_class_use[class_idx].spans_from_reserved);
-            _rpmalloc_inc_span_statistics(heap, span_count, class_idx);
-            return span;
-        }
         span = _rpmalloc_heap_global_cache_extract(heap, span_count);
         if (EXPECTED(span != 0))
         {
             _rpmalloc_stat_inc(&heap->size_class_use[class_idx].spans_from_cache);
+            _rpmalloc_inc_span_statistics(heap, span_count, class_idx);
+            return span;
+        }
+        span = _rpmalloc_heap_reserved_extract(heap, span_count);
+        if (EXPECTED(span != 0))
+        {
+            _rpmalloc_stat_inc(&heap->size_class_use[class_idx].spans_from_reserved);
             _rpmalloc_inc_span_statistics(heap, span_count, class_idx);
             return span;
         }
