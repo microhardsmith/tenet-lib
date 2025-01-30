@@ -18,10 +18,28 @@ If you are using features with these libraries involved, you are recommended to 
 
 ## Build
 
-Just install `clang` and run a single command:
+The project is relatively simple, there is no need for build commands to be synchronized between different operating systems, just run the following commands on your demand.
+
+### Windows:
 
 ``` shell
-make
+clang -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fcolor-diagnostics -fansi-escape-codes -v .\src\share.c .\src\rpmalloc.c .\src\lib_win.c .\src\wepoll.c -lAdvapi32 -lws2_32 -pedantic -o .\lib\tenet.dll
+```
+
+### Linux:
+
+``` shell
+# Using gcc
+gcc -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fPIC -flto -fvisibility=hidden -D_GNU_SOURCE -v ./src/share.c ./src/rpmalloc.c ./src/lib_linux.c -Wl,-s -pedantic -o ./lib/libtenet.so
+
+# Using clang
+clang -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fcolor-diagnostics -fansi-escape-codes -fPIC -flto -fvisibility=hidden -D_GNU_SOURCE -v ./src/share.c ./src/rpmalloc.c ./src/lib_linux.c -Wl,-s -pedantic -o ./lib/libtenet.so
+```
+
+### macOS
+
+``` shell
+clang -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fcolor-diagnostics -fansi-escape-codes -fPIC -flto -fvisibility=hidden -o ./lib/libtenet.dylib -v ./src/share.c ./src/rpmalloc.c ./src/lib_macos.c -Wl,-s -pedantic -o ./lib/libtenet.dylib
 ```
 
 then the dynamic library would be generated under the `lib` dir.

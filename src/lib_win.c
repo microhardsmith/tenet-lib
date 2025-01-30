@@ -6,8 +6,6 @@
 #include <errno.h>
 #include <stdio.h>
 
-#pragma comment(lib, "ws2_32.lib")
-
 int w_connect_block_code() { return WSAEWOULDBLOCK; }
 
 int w_send_block_code() { return WSAEWOULDBLOCK; }

@@ -47,7 +47,7 @@ enum EPOLL_EVENTS {
   EPOLLWRBAND  = (int) (1U <<  9),
   EPOLLMSG     = (int) (1U << 10), /* Never reported. */
   EPOLLRDHUP   = (int) (1U << 13),
-  EPOLLONESHOT = (int) (1U << 31)
+  EPOLLONESHOT = (int) (1U << 30) // MARK changing it to be the same as epoll
 };
 
 #define EPOLLIN      (1U <<  0)
@@ -61,11 +61,11 @@ enum EPOLL_EVENTS {
 #define EPOLLWRBAND  (1U <<  9)
 #define EPOLLMSG     (1U << 10)
 #define EPOLLRDHUP   (1U << 13)
-#define EPOLLONESHOT (1U << 30)
+#define EPOLLONESHOT (1U << 30) // MARK changing it to be the same as epoll
 
 #define EPOLL_CTL_ADD 1
 #define EPOLL_CTL_DEL 2
-#define EPOLL_CTL_MOD 3
+#define EPOLL_CTL_MOD 3 // MARK changing it to be the same as epoll
 
 
 typedef void* HANDLE;
@@ -1797,7 +1797,7 @@ int sock_update(port_state_t* port_state, sock_state_t* sock_state) {
     /* No poll operation is pending; start one. */
     sock_state->poll_info.Exclusive = FALSE;
     sock_state->poll_info.NumberOfHandles = 1;
-    sock_state->poll_info.Timeout.QuadPart = LLONG_MAX;
+    sock_state->poll_info.Timeout.QuadPart = INT64_MAX;
     sock_state->poll_info.Handles[0].Handle = (HANDLE) sock_state->base_socket;
     sock_state->poll_info.Handles[0].Status = 0;
     sock_state->poll_info.Handles[0].Events =
