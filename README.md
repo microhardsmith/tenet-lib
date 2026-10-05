@@ -18,31 +18,76 @@ If you are using features with these libraries involved, you are recommended to 
 
 ## Build
 
-The project is relatively simple, there is no need for build commands to be synchronized between different operating systems, just run the following commands on your demand.
+The build is driven by CMake and pinned to the [Ninja](https://ninja-build.org/) generator.
 
-### Windows:
+### Requirements
 
-``` shell
-clang -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fcolor-diagnostics -fansi-escape-codes -v .\src\share.c .\src\rpmalloc.c .\src\lib_win.c .\src\wepoll.c -lAdvapi32 -lws2_32 -pedantic -o .\lib\tenet.dll
-```
+- CMake 3.21 or newer
+- Ninja
+- A C17 capable compiler (GCC, Clang, or MSVC). No particular compiler is selected for you, CMake uses `cc`/`cl`.
 
-### Linux:
-
-``` shell
-# Using gcc
-gcc -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fPIC -flto -fvisibility=hidden -D_GNU_SOURCE -v ./src/share.c ./src/rpmalloc.c ./src/lib_linux.c -Wl,-s -pedantic -o ./lib/libtenet.so
-
-# Using clang
-clang -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fcolor-diagnostics -fansi-escape-codes -fPIC -flto -fvisibility=hidden -D_GNU_SOURCE -v ./src/share.c ./src/rpmalloc.c ./src/lib_linux.c -Wl,-s -pedantic -o ./lib/libtenet.so
-```
-
-### macOS
+### Commands
 
 ``` shell
-clang -std=c17 -Wall -Wextra -Werror -Wvla -shared -march=native -O3 -g0 -fcolor-diagnostics -fansi-escape-codes -fPIC -flto -fvisibility=hidden -o ./lib/libtenet.dylib -v ./src/share.c ./src/rpmalloc.c ./src/lib_macos.c -Wl,-s -pedantic -o ./lib/libtenet.dylib
+cmake --preset default
+cmake --build --preset default
 ```
 
-then the dynamic library would be generated under the `lib` dir.
+That produces `lib/libtenet.so`, `lib/libtenet.dylib` or `lib/tenet.dll`, depending on the platform.
+
+### Presets
+
+| Preset     | Result                                                                   |
+|------------|--------------------------------------------------------------------------|
+| `default`  | Release, optimised and stripped. The binary normally committed to `lib/`. |
+| `release`  | Release, but the symbol table is kept for backtraces.                    |
+| `debug`    | Unoptimised with full debug info.                                        |
+| `native`   | Release tuned for the current CPU with `-march=native`.                  |
+
+Configure and build are separate steps, so each preset needs its own pair:
+
+``` shell
+cmake --preset debug
+cmake --build --preset debug
+```
+
+Every preset writes to the same `lib/` directory, so building one preset replaces the library produced by
+another. Copy the result aside first if you want to keep both.
+
+### Ninja is not optional
+
+`CMakeLists.txt` rejects any other generator outright. The link step is the only place where the platform
+specific system libraries are named, and the generator decides the exact link command line, so letting the two
+drift apart unnoticed tends to surface as a link error on one platform only. If a tool you need insists on a
+different generator, add `-DTENET_ALLOW_ANY_GENERATOR=ON` to bypass the check.
+
+A plain `cmake -B build -G Ninja` also works, but the presets additionally set the build type, the binary
+directory and the symbol stripping.
+
+### Options
+
+| Option                     | Default | Effect                                                                          |
+|----------------------------|---------|---------------------------------------------------------------------------------|
+| `TENET_NATIVE_ARCH`        | `OFF`   | Adds `-march=native`. Machine specific, see the warning below.                   |
+| `TENET_STRIP`              | `ON`    | Strips the symbol table, matching the `-O3 -g0 -Wl,-s` of the previous commands. |
+| `TENET_ALLOW_ANY_GENERATOR`| `OFF`   | Permits a non-Ninja generator.                                                   |
+
+`-march=native` optimises for whichever CPU ran the build, so the resulting library can fault on an older
+machine. Leave it off for anything you commit or hand to someone else; the `native` preset turns it on.
+
+### Platform sources
+
+Only one backend is compiled in, selected by CMake:
+
+| Platform | Backend             | Extra dependencies |
+|----------|---------------------|--------------------|
+| Linux    | `src/lib_linux.c`   | epoll              |
+| macOS    | `src/lib_macos.c`   | kqueue             |
+| Windows  | `src/lib_win.c`, `src/wepoll.c` | `Advapi32`, `ws2_32` |
+
+`src/share.c` and the vendored `src/rpmalloc.c` are always part of the library. Only the functions marked
+`EXPORT_SYMBOL` in `src/share.h` are meant to be public API.
+
 
 ## Usage
 

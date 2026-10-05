@@ -10,3 +10,14 @@
 !/lib/*.dylib
 !*.svg
 !*.png
+
+# CMake build definition. This file ignores everything first and re-includes only what belongs in the
+# repository, so the CMake entry points have to be re-included explicitly or they would be dropped silently.
+!/CMakeLists.txt
+!/CMakePresets.json
+!*.cmake
+
+# The CMake output tree has to be excluded last, after the re-inclusions above. It contains files that match
+# them, such as CMakeCCompiler.cmake, CMakeSystem.cmake and CMakeCCompilerId.c, so a plain deny on the
+# directory placed any earlier would be undone and the cache would end up in the repository.
+/build/

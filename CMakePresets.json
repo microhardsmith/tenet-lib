@@ -1,0 +1,76 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "description": "Common settings for every preset. Ninja is not negotiable here; CMakeLists.txt refuses other generators.",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "default",
+      "inherits": "base",
+      "displayName": "Release (Ninja)",
+      "description": "Optimised, stripped library, same as the previous -O3 -g0 -Wl,-s commands.",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "displayName": "Release, symbols kept (Ninja)",
+      "description": "Optimised build that keeps the symbol table for backtraces.",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "TENET_STRIP": "OFF"
+      }
+    },
+    {
+      "name": "debug",
+      "inherits": "base",
+      "displayName": "Debug (Ninja)",
+      "description": "Unoptimised build with full debug info.",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "TENET_STRIP": "OFF"
+      }
+    },
+    {
+      "name": "native",
+      "inherits": "default",
+      "displayName": "Release tuned for this CPU (Ninja)",
+      "description": "Adds -march=native. Machine specific, never use this for a binary you intend to commit or share.",
+      "cacheVariables": {
+        "TENET_NATIVE_ARCH": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "native",
+      "configurePreset": "native"
+    }
+  ]
+}
