@@ -71,6 +71,13 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
         -Wno-strict-prototypes
         $<$<BOOL:${TENET_NATIVE_ARCH}>:-march=native>
     )
+elseif(MSVC)
+    # MSVC gets no GCC style flags. /std:c17 is not written here, CMAKE_C_STANDARD above already makes CMake
+    # pass it for any toolset new enough to accept it. Warnings are on but deliberately not promoted to
+    # errors: lib_win.c and wepoll.c can only be compiled on Windows, so MSVC specific diagnostics are the one
+    # part of this build that CI on Linux and macOS cannot vouch for. Add /WX locally once you have verified
+    # a clean /W4 build on the machine you care about.
+    target_compile_options(tenet PRIVATE /W4)
 endif()
 
 if(TENET_NATIVE_ARCH AND NOT CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")

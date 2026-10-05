@@ -11,9 +11,12 @@
       "hidden": true,
       "generator": "Ninja",
       "description": "Common settings for every preset. Ninja is not negotiable here; CMakeLists.txt refuses other generators.",
-      "binaryDir": "${sourceDir}/build/${presetName}",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "TENET_STRIP": "ON",
+        "TENET_NATIVE_ARCH": "OFF",
+        "TENET_ALLOW_ANY_GENERATOR": "OFF"
       }
     },
     {

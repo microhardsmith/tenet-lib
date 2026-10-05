@@ -28,9 +28,12 @@ The build is driven by CMake and pinned to the [Ninja](https://ninja-build.org/)
 
 ### Commands
 
+All presets share a single `build/` directory, so configure once with a preset and then build with the
+ordinary command:
+
 ``` shell
 cmake --preset default
-cmake --build --preset default
+cmake --build build
 ```
 
 That produces `lib/libtenet.so`, `lib/libtenet.dylib` or `lib/tenet.dll`, depending on the platform.
@@ -44,15 +47,20 @@ That produces `lib/libtenet.so`, `lib/libtenet.dylib` or `lib/tenet.dll`, depend
 | `debug`    | Unoptimised with full debug info.                                        |
 | `native`   | Release tuned for the current CPU with `-march=native`.                  |
 
-Configure and build are separate steps, so each preset needs its own pair:
+A preset only decides how `build/` is configured. To switch, configure the new preset and build again:
 
 ``` shell
 cmake --preset debug
-cmake --build --preset debug
+cmake --build build
 ```
 
-Every preset writes to the same `lib/` directory, so building one preset replaces the library produced by
-another. Copy the result aside first if you want to keep both.
+Because every preset writes into the same `build/` and the same `lib/` directory, switching presets replaces
+the previous library in place. Copy the result aside first if you want to keep more than one.
+
+Every preset pins the full set of `TENET_*` cache variables, including the ones it does not change. This matters
+because `build/` is shared: a variable left behind in the cache would otherwise survive into the next
+configuration and silently produce the wrong artifact, for instance keeping a Release build unstripped because a
+`debug` configure had been there before.
 
 ### Ninja is not optional
 
@@ -74,6 +82,35 @@ directory and the symbol stripping.
 
 `-march=native` optimises for whichever CPU ran the build, so the resulting library can fault on an older
 machine. Leave it off for anything you commit or hand to someone else; the `native` preset turns it on.
+
+### Windows and MSVC
+
+The Windows backend builds with MSVC as well as with MinGW or clang-cl. CMake picks whichever toolchain you
+point it at:
+
+``` shell
+cmake --preset default
+cmake --build build
+```
+
+or explicitly:
+
+``` shell
+cmake --preset default -DCMAKE_C_COMPILER=cl
+cmake --build build
+```
+
+Three things are worth knowing:
+
+- `likely()` and `unlikely()` in `src/share.h` fall back to a plain pass-through where `__builtin_expect` does
+  not exist. Both spellings normalise their argument to 0 or 1 and evaluate it exactly once, so the MSVC build
+  behaves identically to the GCC and Clang builds, minus the branch hints. You will see slightly worse code
+  generation, no behaviour change.
+- MSVC gets `/W4` but not `/WX`. Warnings are not promoted to errors here because `lib_win.c` and `wepoll.c`
+  cannot be compiled on Linux or macOS, so MSVC specific diagnostics are the one part of this build that CI on
+  those platforms cannot vouch for. Verify a clean `/W4` build on Windows before adding `/WX`.
+- `/std:c17` is emitted for you by `CMAKE_C_STANDARD`, so a Visual Studio 2019 16.8 or newer toolset is
+  required. Older toolsets silently fall back to an older C standard and then fail on C99 constructs.
 
 ### Platform sources
 

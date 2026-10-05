@@ -7,8 +7,17 @@
 #define EXPORT_SYMBOL __attribute__((visibility("default")))
 #endif
 
+// Branch hints. Only GCC and Clang expose __builtin_expect, so MSVC gets a plain pass-through. Both
+// spellings evaluate their argument exactly once and yield the same normalised 0/1 result, so the two
+// branches cannot drift apart in behaviour; the MSVC one merely stops steering the optimizer. Both
+// spellings are used heavily in the backends, always in boolean position.
+#if defined(__GNUC__) || defined(__clang__)
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+#define likely(x) (!!(x))
+#define unlikely(x) (!!(x))
+#endif
 
 #include <stdio.h>
 
